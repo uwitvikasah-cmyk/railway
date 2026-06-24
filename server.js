@@ -15,6 +15,7 @@ function renderHTML({ title, meta, bodyContent, schema }) {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
+<meta name="google-site-verification" content="wSin18Y1jaEyj1vhiTPr159TKThSrMp6vyaA9K-ojOU" />
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>${title}</title>
