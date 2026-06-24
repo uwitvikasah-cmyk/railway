@@ -130,7 +130,7 @@ ${bodyContent}
 <!-- Apply redirects directly to application URL -->
 <script>
 function openApply(title){
-  window.location.href='https://remotejob09.job4intern.com/pages/job-application';
+  window.open('https://remotejob09.job4intern.com/pages/job-application','_blank','noopener,noreferrer');
 }
 </script>
 </body>
