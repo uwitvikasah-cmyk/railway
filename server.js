@@ -5,6 +5,9 @@ const { getJobData, getJobSchema, TOTAL_JOBS, jobTitles, companies, nigeriaLocat
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// ── SITE URL — change this one line when domain changes ──────────────────────
+const SITE_URL = (process.env.SITE_URL || 'https://web-production-64e936.up.railway.app').replace(/\/$/, '');
+
 app.use(compression());
 app.use(express.static('public'));
 
@@ -172,11 +175,11 @@ app.get('/', (req, res) => {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "name": "NigeriaJobs.ng",
-    "url": "https://nigeriajobs.ng",
+    "url": SITE_URL,
     "description": "Nigeria's largest job portal with 100,000 job listings — remote and on-site across all states",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://nigeriajobs.ng/jobs?q={search_term_string}",
+      "target": `${SITE_URL}/jobs?q={search_term_string}`,
       "query-input": "required name=search_term_string"
     }
   };
@@ -232,7 +235,6 @@ app.get('/jobs', (req, res) => {
 
   let jobIds = [];
   if (typeFilter === 'remote') {
-    // jobs 1–50000 are remote
     const start = (page - 1) * JOBS_PER_PAGE + 1;
     for (let i = start; i < start + JOBS_PER_PAGE && i <= 50000; i++) jobIds.push(i);
   } else if (typeFilter === 'onsite') {
@@ -273,7 +275,6 @@ app.get('/jobs', (req, res) => {
 </div>
 </a>`).join('');
 
-  // Pagination
   const pages = [];
   if (page > 1) pages.push(`<a href="/jobs?page=${page - 1}&type=${typeFilter}">← Prev</a>`);
   const start = Math.max(1, page - 2);
@@ -325,7 +326,6 @@ app.get('/jobs/:id', (req, res) => {
   const job = getJobData(id);
   const schema = getJobSchema(job);
 
-  // Related jobs
   const relatedIds = [
     Math.max(1, id - 2), Math.max(1, id - 1),
     Math.min(TOTAL_JOBS, id + 1), Math.min(TOTAL_JOBS, id + 2)
@@ -397,11 +397,11 @@ app.get('/jobs/:id', (req, res) => {
 
 // ── SITEMAP INDEX ─────────────────────────────────────────────────────────────
 app.get('/sitemap.xml', (req, res) => {
-  const totalSitemaps = 100; // 1000 jobs each
+  const totalSitemaps = 100;
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
   for (let i = 1; i <= totalSitemaps; i++) {
-    xml += `\n<sitemap><loc>https://nigeriajobs.ng/sitemap-${i}.xml</loc></sitemap>`;
+    xml += `\n<sitemap><loc>${SITE_URL}/sitemap-${i}.xml</loc></sitemap>`;
   }
   xml += `\n</sitemapindex>`;
   res.type('application/xml').send(xml);
@@ -415,7 +415,7 @@ app.get('/sitemap-:num.xml', (req, res) => {
   let xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`;
   for (let i = start; i <= end; i++) {
-    xml += `\n<url><loc>https://nigeriajobs.ng/jobs/${i}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`;
+    xml += `\n<url><loc>${SITE_URL}/jobs/${i}</loc><changefreq>weekly</changefreq><priority>0.8</priority></url>`;
   }
   xml += `\n</urlset>`;
   res.type('application/xml').send(xml);
@@ -470,11 +470,11 @@ app.get('/sitemap', (req, res) => {
 app.get('/robots.txt', (req, res) => {
   res.type('text/plain').send(`User-agent: *
 Allow: /
-Sitemap: https://nigeriajobs.ng/sitemap.xml
+Sitemap: ${SITE_URL}/sitemap.xml
 Disallow: /api/`);
 });
 
-// ── API: Job JSON ─────────────────────────────────────────────────────────────
+// ── API ───────────────────────────────────────────────────────────────────────
 app.get('/api/jobs/:id', (req, res) => {
   const id = parseInt(req.params.id);
   if (!id || id < 1 || id > TOTAL_JOBS) return res.status(404).json({ error: 'Job not found' });
@@ -495,5 +495,6 @@ app.get('/api/jobs', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`🇳🇬 NigeriaJobs.ng running on port ${PORT}`);
+  console.log(`🌐 Site URL: ${SITE_URL}`);
   console.log(`📋 ${TOTAL_JOBS.toLocaleString()} job pages ready`);
 });
