@@ -21,6 +21,7 @@ function renderHTML({ title, meta, bodyContent, schema }) {
 <meta name="google-site-verification" content="wSin18Y1jaEyj1vhiTPr159TKThSrMp6vyaA9K-ojOU" />
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "d30a5264486a42bbbbe0e9a59514f450"}'></script><!-- End Cloudflare Web Analytics -->
 <title>${title}</title>
 <meta name="description" content="${meta}"/>
 <meta property="og:title" content="${title}"/>
